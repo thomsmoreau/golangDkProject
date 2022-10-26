@@ -33,8 +33,10 @@ type Options struct {
 func New(opts Options) *Server {
 	// Join the host and port with a colon.
 	address := net.JoinHostPort(opts.Host, strconv.Itoa(opts.Port))
+
 	// Create a new router.
 	mux := chi.NewMux()
+
 	// Create a new server.
 	return &Server{
 		address: address,
@@ -42,6 +44,7 @@ func New(opts Options) *Server {
 		server: &http.Server{
 			Addr:              address,
 			Handler:           mux,
+			// Set up some timeouts
 			ReadTimeout:       5 * time.Second,
 			ReadHeaderTimeout: 5 * time.Second,
 			WriteTimeout:      5 * time.Second,
@@ -52,9 +55,12 @@ func New(opts Options) *Server {
 
 // Start the Server by setting up routes and listening for HTTP requests on the given address.
 func (s *Server) Start() error {
+	// Set up handlers mux
 	s.setupRoutes()
 
-	log.Println("Starting on", s.address)
+	log.Printf("Starting server on %s", s.address)
+	
+	// ListenAndServe always return http.ErrServerClosed, check if different
 	if err := s.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("error starting server: %w", err)
 	}
@@ -63,7 +69,7 @@ func (s *Server) Start() error {
 
 // Stop the Server gracefully within the timeout.
 func (s *Server) Stop() error {
-	log.Println("Stopping")
+	log.Println("Stopping server")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
