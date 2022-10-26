@@ -6,7 +6,7 @@ import (
 
 	"github.com/matryer/is"
 
-	"canvas/integrationtest"
+	"golangdk/integrationtest"
 )
 
 func TestServer_Start(t *testing.T) {
@@ -20,6 +20,8 @@ func TestServer_Start(t *testing.T) {
 
 		resp, err := http.Get("http://localhost:8081/")
 		is.NoErr(err)
+		// It will return 404 since no routes are setted up in CreateServer func from integration test
+		// Once done the cleanup func will stop server
 		is.Equal(http.StatusNotFound, resp.StatusCode)
 	})
 }

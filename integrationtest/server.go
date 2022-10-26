@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"canvas/server"
+	"golangdk/server"
 )
 
 // CreateServer for testing on port 8081, returning a cleanup function that stops the server.
@@ -14,17 +14,20 @@ import (
 //	cleanup := CreateServer()
 //	defer cleanup()
 func CreateServer() func() {
+	// Create new server struct
 	s := server.New(server.Options{
 		Host: "localhost",
 		Port: 8081,
 	})
 
+	// Goroutine to panic if an error occurs with server
 	go func() {
 		if err := s.Start(); err != nil {
 			panic(err)
 		}
 	}()
 
+	// Wait for server to start
 	for {
 		_, err := http.Get("http://localhost:8081/")
 		if err == nil {
@@ -33,6 +36,7 @@ func CreateServer() func() {
 		time.Sleep(5 * time.Millisecond)
 	}
 
+	// Return func to stop server
 	return func() {
 		if err := s.Stop(); err != nil {
 			panic(err)
