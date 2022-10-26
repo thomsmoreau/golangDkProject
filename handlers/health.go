@@ -13,6 +13,6 @@ func Health(mux chi.Router) {
 	*/
 	// Default to returning HTTP 200 OK if nothing else is set
 	mux.Get("/health", func(w http.ResponseWriter, r *http.Request) {
-		// 🤪
+
 	})
 }
