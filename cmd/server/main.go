@@ -18,7 +18,6 @@ import (
 var release string
 
 func main() {
-	fmt.Println("Message main.go")
 	os.Exit(start())
 }
 
@@ -54,10 +53,12 @@ func start() int {
 
 	// An error group is something that can run functions in goroutines, wait for the functions to finish, and return any errors.
 	var eg errgroup.Group
+
 	// NotifyContext function makes sure to cancel the returned context if it receives one of the signals we have asked for.
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 
+	// Goroutine
 	eg.Go(func() error {
 		// Blocks until the context before created is  done (receive a SIGTERM or SIGINT)
 		<-ctx.Done()
@@ -68,10 +69,12 @@ func start() int {
 		return nil
 	})
 
+	// Start server
 	if err := s.Start(); err != nil {
 		log.Info("Error starting server", zap.Error(err))
 		return 1
 	}
+
 	// By calling eg.Wait on the error group from before, we wait for all functions passed to calls to eg.Go to finish
 	if err := eg.Wait(); err != nil {
 		return 1
