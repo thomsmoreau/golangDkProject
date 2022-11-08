@@ -34,7 +34,7 @@ func Navbar(path string) g.Node {
 			Div(Class("flex items-center space-x-4 h-16"),
 				Div(Class("flex-shrink-0"), outline.Globe(Class("h-6 w-6"))),
 				NavbarLink("/", "Home", path),
-				NavbarLink("/health", "Health Check",path),
+				NavbarLink("/health", "Health",path),
 			),
 		),
 	)
